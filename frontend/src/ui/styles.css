@@ -1,0 +1,7 @@
+:root{color-scheme:light dark}
+body{margin:0;background:#fff;color:#111}
+label{font-size:12px;color:#6b7280}
+input,select,button{padding:8px;border:1px solid #e5e7eb;border-radius:6px}
+button{background:#111;color:#fff;border-color:#111;cursor:pointer}
+button:hover{opacity:.9}
+

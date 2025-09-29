@@ -7,7 +7,14 @@ This is a simple full‑stack application to record financial transactions (inco
 - Frontend: React + Vite + TypeScript
 - Database: MongoDB (Docker Compose)
 
-### Quick Start
+### Quick Start (Local)
+
+0) Clone the repo
+
+```bash
+git clone https://github.com/Justraymond99/techincal-assessment.git
+cd techincal-assessment
+```
 
 1) Prerequisites
 - Node.js 18+
@@ -64,6 +71,16 @@ VITE_API_BASE_URL=http://localhost:3000
 
 Capital is updated automatically on create/update/delete.
 
+### Quick API checks
+
+```bash
+curl http://localhost:3000/capital
+curl -X POST http://localhost:3000/transactions \
+  -H "Content-Type: application/json" \
+  -d '{"type":"income","amount":1000,"description":"Salary"}'
+curl http://localhost:3000/transactions | jq .
+```
+
 ### Scripts
 
 - Backend
@@ -80,4 +97,14 @@ Capital is updated automatically on create/update/delete.
 
 - Configure `MONGODB_URI` for your environment.
 - Serve the frontend build from any static host and set `VITE_API_BASE_URL` accordingly.
+
+### Troubleshooting
+
+- Ensure Docker is running and `docker compose ps` shows `mongo` healthy.
+- If ports are busy, change `PORT` in `backend/.env` or Vite’s port via `--port`.
+- CORS is enabled by default; if you change origins, restart the backend.
+
+### Repository
+
+This code lives at `Justraymond99/techincal-assessment` on GitHub: `https://github.com/Justraymond99/techincal-assessment`.
 

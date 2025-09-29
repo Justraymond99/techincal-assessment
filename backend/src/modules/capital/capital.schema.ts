@@ -5,7 +5,7 @@ export type CapitalDocument = HydratedDocument<Capital>;
 
 @Schema({ timestamps: true })
 export class Capital {
-  @Prop({ required: true, default: 0 })
+  @Prop({ required: true, type: Number, default: 0 })
   value!: number;
 }
 

@@ -11,6 +11,7 @@ async function bootstrap(): Promise<void> {
   await app.listen(port);
   // eslint-disable-next-line no-console
   console.log(`Backend listening on http://localhost:${port}`);
+  console.log('Using in-memory database (no persistence)');
 }
 
 bootstrap();

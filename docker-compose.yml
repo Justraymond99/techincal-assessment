@@ -1,25 +1,26 @@
 version: '3.8'
 services:
-  mongo:
-    image: mongo:6
+  postgres:
+    image: postgres:15
     restart: unless-stopped
     ports:
-      - "27017:27017"
+      - "5432:5432"
     volumes:
-      - mongo_data:/data/db
+      - postgres_data:/var/lib/postgresql/data
     environment:
-      MONGO_INITDB_DATABASE: finances
-  mongo-express:
-    image: mongo-express:1.0.2-20
+      POSTGRES_DB: finances
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+  pgadmin:
+    image: dpage/pgadmin4:latest
     restart: unless-stopped
     depends_on:
-      - mongo
+      - postgres
     environment:
-      ME_CONFIG_MONGODB_SERVER: mongo
-      ME_CONFIG_MONGODB_ENABLE_ADMIN: 'true'
-      ME_CONFIG_BASICAUTH: 'false'
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
     ports:
-      - "8081:8081"
+      - "8081:80"
 volumes:
-  mongo_data:
+  postgres_data:
 

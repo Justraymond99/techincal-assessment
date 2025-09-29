@@ -7,16 +7,16 @@ export type TransactionType = 'income' | 'expense';
 
 @Schema({ timestamps: true })
 export class Transaction {
-  @Prop({ required: true, enum: ['income', 'expense'] })
+  @Prop({ required: true, type: String, enum: ['income', 'expense'] })
   type!: TransactionType;
 
-  @Prop({ required: true, min: 0 })
+  @Prop({ required: true, type: Number, min: 0 })
   amount!: number;
 
-  @Prop()
+  @Prop({ type: String })
   description?: string;
 
-  @Prop()
+  @Prop({ type: Date })
   date?: Date;
 }
 

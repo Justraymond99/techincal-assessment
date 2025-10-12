@@ -2,7 +2,7 @@
 
 A full-stack application for recording financial transactions (income and expenses) with automatic capital tracking. Features a clean, wireframe-matching UI with real-time updates.
 
-## 🚀 Features
+## Features
 
 - **Transaction Management**: Add, edit, delete income and expense transactions
 - **Real-time Capital Tracking**: Automatic calculation and display of current capital
@@ -10,7 +10,7 @@ A full-stack application for recording financial transactions (income and expens
 - **Multiple Database Options**: PostgreSQL with automatic fallback to in-memory storage
 - **English Interface**: Fully translated user interface
 
-## 🛠 Tech Stack
+## Tech Stack
 
 - **Backend**: Express.js + TypeScript with PostgreSQL
 - **Frontend**: React + Vite + TypeScript
@@ -18,14 +18,14 @@ A full-stack application for recording financial transactions (income and expens
 - **Styling**: Inline CSS with modern design
 - **API**: RESTful endpoints with CORS enabled
 
-## 📋 Prerequisites
+## Prerequisites
 
 - Node.js 18+
 - npm or yarn
 - Docker (optional, for PostgreSQL)
 - Git
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Option 1: Fastest (In-Memory Storage)
 
@@ -85,13 +85,13 @@ npm install
 npm run dev
 ```
 
-## 🌐 Access the App
+## Access the App
 
 - **Frontend**: http://localhost:5173
 - **Backend API**: http://localhost:3000
 - **Database Admin** (if using Docker): http://localhost:8081 (pgAdmin)
 
-## 📊 Database Schema
+## Database Schema
 
 ### Transactions Table
 ```sql
@@ -114,7 +114,7 @@ CREATE TABLE capital (
 );
 ```
 
-## 🔌 API Endpoints
+## API Endpoints
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
@@ -139,7 +139,7 @@ curl -X POST http://localhost:3000/transactions \
 curl http://localhost:3000/transactions
 ```
 
-## ⚙️ Configuration
+## Configuration
 
 ### Environment Variables
 
@@ -158,11 +158,11 @@ Create `frontend/.env`:
 VITE_API_BASE_URL=http://localhost:3000
 ```
 
-## 📝 Available Scripts
+## Available Scripts
 
 ### Backend
-- `npm run dev` - Start NestJS server (requires MongoDB)
-- `npm run dev:postgres` - Start with PostgreSQL
+- `npm run dev` - Start Express server with PostgreSQL + fallback to in-memory
+- `npm run dev:postgres` - Start with PostgreSQL only
 - `npm run dev:cloud` - Start with PostgreSQL + fallback to in-memory
 - `npm run build` - Build for production
 - `npm start` - Run production build
@@ -172,7 +172,7 @@ VITE_API_BASE_URL=http://localhost:3000
 - `npm run build` - Build for production
 - `npm run preview` - Preview production build
 
-## 🐳 Docker Setup
+## Docker Setup
 
 The app includes Docker Compose configuration for easy PostgreSQL setup:
 
@@ -193,7 +193,7 @@ services:
       PGADMIN_DEFAULT_PASSWORD: admin
 ```
 
-## 🔧 Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
@@ -226,7 +226,7 @@ docker compose up -d
 dropdb finances && createdb finances
 ```
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 ├── backend/
@@ -247,7 +247,7 @@ dropdb finances && createdb finances
 └── README.md
 ```
 
-## 🚀 Deployment
+## Deployment
 
 ### Backend Deployment
 1. Set `NODE_ENV=production`
@@ -259,11 +259,11 @@ dropdb finances && createdb finances
 2. Run `npm run build`
 3. Serve the `dist` folder with any static host
 
-## 📄 License
+## License
 
 This project is part of a technical assessment.
 
-## 🔗 Repository
+## Repository
 
 **GitHub**: https://github.com/Justraymond99/techincal-assessment
 

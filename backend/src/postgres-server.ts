@@ -1,10 +1,33 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import cors from 'cors';
 import { pool, initDatabase } from './database.js';
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// Input validation helpers
+function validateTransaction(data: any) {
+  const errors: string[] = [];
+  
+  if (!data.type || !['income', 'expense'].includes(data.type)) {
+    errors.push('Type must be either "income" or "expense"');
+  }
+  
+  if (!data.amount || isNaN(Number(data.amount)) || Number(data.amount) < 0) {
+    errors.push('Amount must be a positive number');
+  }
+  
+  if (data.description && typeof data.description !== 'string') {
+    errors.push('Description must be a string');
+  }
+  
+  if (data.date && isNaN(Date.parse(data.date))) {
+    errors.push('Date must be a valid date');
+  }
+  
+  return errors;
+}
 
 // Initialize database on startup
 await initDatabase();
@@ -33,9 +56,10 @@ async function updateCapital() {
 }
 
 // Routes
-app.get('/transactions', async (req, res) => {
+app.get('/transactions', async (req: Request, res: Response) => {
   try {
-    const result = await pool.query(`
+    const { search, type, limit = '50' } = req.query;
+    let query = `
       SELECT 
         id as _id,
         type,
@@ -44,8 +68,32 @@ app.get('/transactions', async (req, res) => {
         date,
         created_at as "createdAt"
       FROM transactions 
-      ORDER BY created_at DESC
-    `);
+    `;
+    const params: any[] = [];
+    let paramCount = 0;
+
+    const conditions = [];
+    
+    if (search) {
+      paramCount++;
+      conditions.push(`(description ILIKE $${paramCount} OR CAST(amount AS TEXT) ILIKE $${paramCount})`);
+      params.push(`%${search}%`);
+    }
+    
+    if (type && ['income', 'expense'].includes(type as string)) {
+      paramCount++;
+      conditions.push(`type = $${paramCount}`);
+      params.push(type);
+    }
+    
+    if (conditions.length > 0) {
+      query += ` WHERE ${conditions.join(' AND ')}`;
+    }
+    
+    query += ` ORDER BY created_at DESC LIMIT $${paramCount + 1}`;
+    params.push(parseInt(limit as string));
+    
+    const result = await pool.query(query, params);
     res.json(result.rows);
   } catch (error) {
     console.error('Error fetching transactions:', error);
@@ -53,8 +101,16 @@ app.get('/transactions', async (req, res) => {
   }
 });
 
-app.post('/transactions', async (req, res) => {
+app.post('/transactions', async (req: Request, res: Response) => {
   try {
+    const validationErrors = validateTransaction(req.body);
+    if (validationErrors.length > 0) {
+      return res.status(400).json({ 
+        error: 'Validation failed', 
+        details: validationErrors 
+      });
+    }
+    
     const { type, amount, description, date } = req.body;
     
     const result = await pool.query(`
@@ -77,9 +133,23 @@ app.post('/transactions', async (req, res) => {
   }
 });
 
-app.patch('/transactions/:id', async (req, res) => {
+app.patch('/transactions/:id', async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
+    
+    // Validate ID
+    if (!id || isNaN(Number(id))) {
+      return res.status(400).json({ error: 'Invalid transaction ID' });
+    }
+    
+    const validationErrors = validateTransaction(req.body);
+    if (validationErrors.length > 0) {
+      return res.status(400).json({ 
+        error: 'Validation failed', 
+        details: validationErrors 
+      });
+    }
+    
     const { type, amount, description, date } = req.body;
     
     const result = await pool.query(`
@@ -107,9 +177,14 @@ app.patch('/transactions/:id', async (req, res) => {
   }
 });
 
-app.delete('/transactions/:id', async (req, res) => {
+app.delete('/transactions/:id', async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
+    
+    // Validate ID
+    if (!id || isNaN(Number(id))) {
+      return res.status(400).json({ error: 'Invalid transaction ID' });
+    }
     
     const result = await pool.query(`
       DELETE FROM transactions 
@@ -129,7 +204,7 @@ app.delete('/transactions/:id', async (req, res) => {
   }
 });
 
-app.get('/capital', async (req, res) => {
+app.get('/capital', async (req: Request, res: Response) => {
   try {
     const result = await pool.query('SELECT value as capital FROM capital LIMIT 1');
     res.json({ capital: parseFloat(result.rows[0].capital) });
@@ -137,6 +212,11 @@ app.get('/capital', async (req, res) => {
     console.error('Error fetching capital:', error);
     res.status(500).json({ error: 'Failed to fetch capital' });
   }
+});
+
+// Health check endpoint
+app.get('/health', (req: Request, res: Response) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
 const PORT = process.env.PORT || 3000;
